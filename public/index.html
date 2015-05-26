@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<HTML>
+<head>
+    <meta charset=utf8>
+    <title>Monkey Messenger</title>
+
+    <!-- this is pretty garish. -->
+    <link rel='stylesheet' href='index.css'>
+</head>
+
+<BODY>
+<%
+
+monkey.init()
+
+self.state = self.fs.getfirst('action',None)
+user = None
+userCookie = self.headers['Cookie']
+if userCookie == None:
+    self.username = "Guest"
+    self.hasLogged = False
+    self.signupState = "as"
+    self.ookState = "as"
+    self.loginState = "as"
+else:
+    self.username = (userCookie.split('=')[1]).split(';')[0]
+    if self.username != None:
+        user = self.username
+    if " " in self.username:
+        self.hasLogged = (userCookie.split(' ')[2]).split('=')[1]
+    else:
+        self.hasLogged = (userCookie.split(' ')[1]).split('=')[1]
+    print(self.hasLogged)
+    self.signupState = "as"
+    self.ookState = "as"
+    self.loginState = "as"
+
+if self.state == 'login':
+    didFail = monkey.login(self)
+    if didFail == True:
+        self.loginState = "failed"
+    elif didFail == False:
+        self.loginState = "passed"
+
+elif self.state == 'signup':
+    didFail = monkey.signup(self)
+    if didFail == True:
+        self.signupState = "failed"
+    else:
+        self.signupState = "passed"
+
+#elif self.state == 'ook':
+ #   didFail = monkey.addOOK(self)
+#    if didFail == False:
+ #       self.ookState = "You must be logged in to do this"
+
+elif self.state == 'logout':
+    monkey.logout(self)
+
+
+%>
+
+<!-- the header -->
+<div class="title">
+    Welcome to MONKEY!
+    <img src='logo.png'>
+</div>
+
+<!--the forms -->
+    <form class='login' action='index.html'>
+<%
+if self.loginState == "failed":
+    self.remote.write("<fieldset>The username or password you entered isn't real!!<br><label for='username'>Name</label><input name='username'><label for='password'>Password</label><input name='password' type='password'><input type = 'hidden' name ='action' value = 'login'><input type='submit' value='Log in!'></fieldset>")
+elif self.loginState == "passed":
+    self.remote.write("<fieldset>Logged in as " + self.username + "</fieldset>")
+elif self.hasLogged == "True" or self.hasLogged == True:
+    self.remote.write("<fieldset>Logged in as " + self.username + "</fieldset>")
+else:
+    self.remote.write("<fieldset><label for='username'>Name</label><br><input name='username'><label for='password'>Password</label><br><input name='password' type='password'><input type = 'hidden' name ='action' value = 'login'><input type='submit' value='Log in!'></fieldset>")
+%>
+    </form>
+
+<%
+if self.hasLogged == "True" or self.hasLogged == True:
+    self.remote.write("<form class='logout' action='index.html'><input type = 'hidden' name ='action' value = 'logout'><input type='submit' value='Logout!'></form>")
+%>
+    <form class='signup' action='index.html'>
+<%
+if self.signupState == "failed":
+    self.remote.write("<fieldset>The username or email you entered already exists!<legend>Sign up!</legend><label for='username'>Name<input name='username'><label for='password1'>Password<input type='password' name='password1'><label for='email'>E-mail<input name='email'><input type = 'hidden' name ='action' value = 'signup'><input type='submit' value='Create!'></fieldset>")
+elif self.signupState == "passed":
+    self.remote.write("<fieldset>Thanks for Signing up!!!<br><legend>Sign up!</legend><label for='username'>Name<input name='username'><label for='password1'>Password<input type='password' name='password1'><label for='email'>E-mail<input name='email'><input type = 'hidden' name ='action' value = 'signup'><input type='submit' value='Create!'></fieldset>")
+elif self.hasLogged == "True" or self.hasLogged == True:
+    pass
+else:
+    self.remote.write("<fieldset><legend>Sign up!</legend><label for='username'>Name<input name='username'><label for='password1'>Password<input type='password' name='password1'><label for='email'>E-mail<input name='email'><input type = 'hidden' name ='action' value = 'signup'><input type='submit' value='Create!'></fieldset>")
+%>
+                <!--<label for='username'>Name
+                <input name='username'>
+                <label for='password1'>Password
+                <input type='password' name='password1'>
+                <label for='email'>E-mail
+                <input name='email'>
+                <input type = 'hidden' name ='action' value = 'signup'>
+                <input type='submit' value="Create!">-->
+    </form>
+
+    <form id='ooks' class='ook' action='ook.html'>
+            <fieldset>
+            <legend>Ook it!</legend>
+<%
+if self.ookState != "as":
+    self.remote.write(self.ookState)
+    self.ookState = "as"
+%>
+                <label for="ook">
+                <input name='ooks'  class='ookInput'>
+                <!--<input type = 'hidden' name ='action' value = 'ook'>-->
+                <input type='submit' value="ookIt!">
+            </fieldset>
+    </form>
+
+<!-- the content area -->
+<div>
+
+    <div class="info">
+        MONKEY is a unique fast-paced, smooth, hipster service
+        just like Twitter&reg; except that Twitter works, and this
+        service doesn't.
+    </div>
+
+
+
+    <div id="feed" class="feed">
+    </div>
+
+</div>
+
+    <div class="copyright">
+        MONKEY is &copy;
+<%
+self.remote.write( str(monkey.time.localtime().tm_year))
+%>
+MONKEY. All rights reserved. &#x1f639
+    </div>
+
+<script src="feed.js"></script>
+
+</BODY>
+</HTML>

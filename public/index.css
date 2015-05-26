@@ -1,0 +1,65 @@
+body
+ {
+    background-image:url("MonkeyBackground.jpg");
+    font-family: sans-serif;
+	color: white;
+}
+
+form.login fieldset
+{
+	position: relative;
+	width:20px;
+}
+
+form.signup
+{
+	position: relative;
+	width:20px;
+}
+
+form.ook
+{
+	position: fixed;
+	top: 70px;
+	left: 275px;
+}
+
+input.ookInput
+{
+	width: 500px;
+}
+
+div.title
+{
+	position: relative;
+	text-align: center;
+}
+
+div.info
+{
+	position: fixed;
+	text-align: center;
+	bottom: 2%;
+	width: 100%;
+}
+
+div.feed
+{
+	position: fixed;
+	top: 140px;
+	left: 275px;
+	width:65%;
+}
+
+div.copyright
+{
+	position:fixed;
+	text-align: center;
+	bottom: 0%;
+	width: 100%;
+}
+div.posts
+{
+	width:100%;
+	border-style:inset;
+}
